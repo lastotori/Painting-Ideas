@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Monster + Fanatic Paint Scheme Generator</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#1e1e2f;
+    color:white;
+    text-align:center;
+    padding:40px;
+}
+
+button{
+    font-size:1.1em;
+    padding:10px 20px;
+    margin:8px;
+    border:none;
+    border-radius:8px;
+    background:#4CAF50;
+    color:white;
+    cursor:pointer;
+}
+
+#monster{
+    font-size:2em;
+    margin:20px;
+}
+
+#colors{
+
+margin-top:20px;
+text-align:left;
+margin-left:300px;
+min-width:220px;
+}
+
+.paintRow{
+margin:6px 0;
+font-size:1.2em;
+}
+
+}
+
+.paintRow{
+    margin:6px;
+    font-size:1.2em;
+}
+
+.swatch{
+    display:inline-block;
+    width:16px;
+    height:16px;
+    margin-right:10px;
+    border:1px solid #ccc;
+    vertical-align:middle;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Monster Generator</h1>
+
+<div id="monster">Click "Summon Monster"</div>
+
+<button id="rollButton">Summon Monster</button> <button id="searchButton">Find Mini on MyMiniFactory</button>
+
+<h2>Fanatic Paint Scheme</h2>
+
+<button id="colorButton">Generate Paint Scheme</button>
+
+<div id="colors"></div>
+
+<script>
+
+// ---------------- MONSTERS ----------------
+
+const monsters=[
+"Goblin","Ogre","Troll","Dragon","Wyvern","Skeleton","Zombie",
+"Vampire","Werewolf","Lich","Hydra","Kraken","Minotaur",
+"Manticore","Medusa","Harpy","Griffon","Basilisk",
+"Beholder","Elemental","Giant","Demon","Devil"
+];
+
+let currentMonster="";
+
+// ---------------- FANATIC COLORS WITH HEX ----------------
+
+const paints={
+
+"Imperial Navy":"#1a2a5a",
+"Regal Blue":"#1f3c88",
+"Royal Blue":"#2f5ed7",
+"Crystal Blue":"#4fa7ff",
+"Arctic Gem":"#7dd8ff",
+"Bright Sapphire":"#0087c9",
+
+"Molten Lava":"#ff3c1a",
+"Burning Ore":"#ff5a00",
+"Lava Orange":"#ff7a1a",
+"Flickering Flame":"#ff8f33",
+
+"Resplendent Red":"#8c0f0f",
+"Angelic Red":"#b31414",
+"Legendary Red":"#d11f1f",
+"Sacred Scarlet":"#ff2a2a",
+"Violent Vermillion":"#ff4a2a",
+
+"Emerald Forest":"#0f5e2e",
+"Leafy Green":"#1f7a38",
+"Rainforest":"#1f8f45",
+"Electric Lime":"#7fff00",
+"Army Green":"#4f6f2f",
+"Guardian Green":"#2f6b3c",
+
+"Alien Purple":"#5b2a86",
+"Cultist Purple":"#7a2fa8",
+"Hexed Violet":"#9b4cff",
+
+"Demigod Flames":"#ffc400",
+"Fiendish Yellow":"#ffd000",
+"Daemonic Yellow":"#ffe100",
+"Ice Yellow":"#fff4a3",
+
+"Matt Black":"#111111",
+"Deep Grey":"#444444",
+"Uniform Grey":"#6a6a6a",
+"Ash Grey":"#8a8a8a",
+"Matt White":"#ffffff",
+
+"Skeleton Bone":"#e6d7a8",
+"Pale Sand":"#f2e4c6",
+"Ancient Stone":"#cfc7b2"
+
+};
+
+// ---------------- COLOR FAMILIES ----------------
+
+const blues=["Imperial Navy","Regal Blue","Royal Blue","Crystal Blue","Arctic Gem","Bright Sapphire"];
+const oranges=["Molten Lava","Burning Ore","Lava Orange","Flickering Flame"];
+const reds=["Resplendent Red","Angelic Red","Legendary Red","Sacred Scarlet","Violent Vermillion"];
+const greens=["Emerald Forest","Leafy Green","Rainforest","Electric Lime","Army Green","Guardian Green"];
+const purples=["Alien Purple","Cultist Purple","Hexed Violet"];
+const yellows=["Demigod Flames","Fiendish Yellow","Daemonic Yellow","Ice Yellow"];
+
+const neutrals=["Matt Black","Deep Grey","Uniform Grey","Ash Grey"];
+const highlights=["Skeleton Bone","Pale Sand","Ancient Stone","Matt White"];
+
+// complementary pairs
+const complementaryPairs=[
+[blues,oranges],
+[reds,greens],
+[purples,yellows]
+];
+
+// helper
+function randomFrom(arr){
+return arr[Math.floor(Math.random()*arr.length)];
+}
+
+// ---------------- MONSTER BUTTON ----------------
+
+document.getElementById("rollButton").addEventListener("click",function(){
+
+const index=Math.floor(Math.random()*monsters.length);
+currentMonster=monsters[index];
+
+document.getElementById("monster").textContent=currentMonster;
+
+});
+
+// ---------------- MINI SEARCH ----------------
+
+document.getElementById("searchButton").addEventListener("click",function(){
+
+if(currentMonster==="") return;
+
+const url="https://www.myminifactory.com/search/?query="+encodeURIComponent(currentMonster);
+
+window.open(url,"_blank");
+
+});
+
+// ---------------- PAINT GENERATOR ----------------
+
+document.getElementById("colorButton").addEventListener("click",function(){
+
+const pair=randomFrom(complementaryPairs);
+
+const main=randomFrom(pair[0]);
+const complement=randomFrom(pair[1]);
+
+const accent=randomFrom([
+...blues,...reds,...greens,...purples,...yellows,...oranges
+]);
+
+const shadow=randomFrom(neutrals);
+const highlight=randomFrom(highlights);
+
+const palette=[main,complement,accent,shadow,highlight];
+
+const container=document.getElementById("colors");
+container.innerHTML="";
+
+palette.forEach(color=>{
+
+const row=document.createElement("div");
+row.className="paintRow";
+
+const swatch=document.createElement("span");
+swatch.className="swatch";
+swatch.style.backgroundColor=paints[color];
+
+const label=document.createElement("span");
+label.textContent=color;
+
+row.appendChild(swatch);
+row.appendChild(label);
+
+container.appendChild(row);
+
+});
+
+});
+
+</script>
+
+</body>
+</html>
